@@ -1,44 +1,43 @@
-from sentence_transformers import SentenceTransformer
-import faiss
-import numpy as np
-import pickle
+# src/vector_store.py
+
+# src/vector_store.py
+
 import os
+from langchain.document_loaders import TextLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import FAISS
+from langchain.embeddings import HuggingFaceEmbeddings
 
-# Load the embedding model once
-model = SentenceTransformer('all-MiniLM-L6-v2')
+DATA_FOLDER = "data"
+VECTOR_DB_DIR = "vectorstore"
 
-# Paths to save files
-index_path = "data/index.faiss"
-store_path = "data/doc_store.pkl"
+def load_documents(language):
+    lang_folder = os.path.join(DATA_FOLDER, language)
+    docs = []
+    for file_name in os.listdir(lang_folder):
+        if file_name.endswith(".txt"):
+            loader = TextLoader(os.path.join(lang_folder, file_name), encoding="utf-8")
+            docs.extend(loader.load())
+    return docs
 
-def create_index(documents):
-    vectors = model.encode(documents)
-    dim = vectors.shape[1]
-
-    # Create a FAISS index
-    index = faiss.IndexFlatL2(dim)
-    index.add(np.array(vectors))
-
-    # Save the index
-    faiss.write_index(index, index_path)
-
-    # Save documents
-    doc_store = {i: doc for i, doc in enumerate(documents)}
-    with open(store_path, "wb") as f:
-        pickle.dump(doc_store, f)
-
-    print("✅ Initial index and doc store created.")
+def create_index_for_language(language):
+    print(f"Loading documents for language: {language}")
+    documents = load_documents(language)
+    print(f"[INFO] Loaded {len(documents)} documents.")
 
 
-def load_index():
-    if not os.path.exists(index_path) or not os.path.exists(store_path):
-        raise Exception("Index or document store not found. Run init_index.py first.")
+    if not documents:
+        raise ValueError("No valid document content to index. Please check your .txt files.")
 
-    index = faiss.read_index(index_path)
-    with open(store_path, "rb") as f:
-        doc_store = pickle.load(f)
-    return index, doc_store
+    print("Splitting documents...")
+    splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    docs = splitter.split_documents(documents)
 
+    print("Embedding and creating vector index...")
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    vectorstore = FAISS.from_documents(docs, embeddings)
 
-def embed_query(query):
-    return model.encode([query])
+    lang_index_dir = os.path.join(VECTOR_DB_DIR, language)
+    os.makedirs(lang_index_dir, exist_ok=True)
+    vectorstore.save_local(lang_index_dir)
+    print(f"Vector index created for {language} and saved to {lang_index_dir}")

@@ -1,4 +1,4 @@
-from src.Vector_store import load_index, embed_query
+from src.vector_store import load_index, embed_query
 import numpy as np
 
 # Load vector DB and document store
@@ -17,4 +17,20 @@ def chat():
         print("🤖 Bot:", answer)
 
 if __name__ == "__main__":
-    chat()
+    print("Welcome to the multilingual chatbot!")
+    question = input("Enter your question: ")
+    lang = input("Enter language code (en, hi, ta, fr): ")
+
+    try:
+        start_time = time.time()
+        answer = ask_question(question, lang)
+        end_time = time.time()
+
+        print(f"\nAnswer: {answer}")
+        
+        log_interaction(question, answer, lang, end_time - start_time)
+        print("\n[Logged interaction in chatbot_usage.csv ✅]")
+
+    except Exception as e:
+        print(f"Error: {e}")
+

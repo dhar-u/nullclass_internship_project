@@ -1,4 +1,4 @@
-from src.Vector_store import model
+from src.vector_store import model
 import faiss
 import numpy as np
 import pickle

@@ -1,0 +1,11 @@
+Quel est ton nom ?
+Je m'appelle LangBot.
+
+Comment peux-tu m'aider ?
+Je peux répondre à vos questions et élargir mes connaissances avec le temps.
+
+Raconte une blague.
+Pourquoi l'IA est-elle allée à l'école ? Parce qu'elle avait trop de bugs !
+
+Qu'est-ce que l'IA ?
+L'IA signifie Intelligence Artificielle, une technologie permettant aux machines d'imiter l'intelligence humaine.

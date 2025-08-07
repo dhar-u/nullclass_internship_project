@@ -1,6 +1,7 @@
-from src.Vector_store import create_index
+from vector_store import create_index_for_language
 
-with open("data/init_docs.txt", "r") as f:
-    docs = [line.strip() for line in f.readlines() if line.strip()]
+# List of language codes you want to index
+languages = ["en", "hi", "ta", "fr"]
 
-create_index(docs)
+for lang in languages:
+    create_index_for_language(lang)
