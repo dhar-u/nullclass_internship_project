@@ -1,0 +1,5 @@
+Python is a popular programming language used in AI.
+LangChain helps connect language models to external data and tools.
+FAISS is a library used for fast vector similarity search.
+Sentence Transformers convert text into vector embeddings.
+Machine learning enables systems to learn from data without explicit programming.
